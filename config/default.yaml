@@ -1,0 +1,210 @@
+# ============================================================
+# 技术文档智能精简工具 - 配置文件
+# ============================================================
+
+# ── 路径配置 ────────────────────────────────────────────────
+paths:
+  input_dir: "./input"              # 输入文档目录
+  output_dir: "./output"            # 输出精简文档目录
+  backup_dir: "./backups"           # 备份目录
+  state_file: "./state/process_state.json"   # 状态文件
+  log_dir: "./logs"                 # 日志目录
+  report_dir: "./reports"           # 报告目录
+
+# ── 运行模式 ────────────────────────────────────────────────
+# full: 快速清洗 + LLM压缩 + 信息密度评估
+# fast: 仅快速清洗（基于正则）
+# llm:  仅LLM压缩
+mode: "llm"
+
+# ── 文档转换配置 ──────────────────────────────────────────────
+convert:
+  enabled: true
+  formats: [".pdf", ".docx", ".pptx", ".html", ".htm"]
+  do_ocr: true
+  force_ocr: false
+  device: "auto"                   # auto / cuda / cpu
+  max_pages: 10                    # 大 PDF 拆分阈值
+  image_mode: "placeholder"        # placeholder / embedded / referenced
+  include_furniture: false         # 不含页眉页脚
+
+# ── 日志配置 ────────────────────────────────────────────────
+logging:
+  level: "INFO"                     # DEBUG, INFO, WARNING, ERROR, STATS
+  format: "[%(asctime)s] %(levelname)-7s %(message)s"
+  datefmt: "%Y-%m-%d %H:%M:%S"
+  # 日志轮转策略
+  rotation:
+    max_bytes: 10485760             # 10MB
+    backup_count: 5
+  # 同时输出到控制台和文件
+  console: true
+  file: true
+
+# ── 断点续传配置 ────────────────────────────────────────────
+checkpoint:
+  enabled: true
+  interval: 5                       # 每处理N个文件保存一次状态
+  max_retries: 3                    # 失败重试次数
+  retry_delay: 2                    # 重试基础延迟（秒）
+
+# ── 回滚配置 ────────────────────────────────────────────────
+rollback:
+  enabled: true
+  auto_cleanup_days: 30             # 自动清理N天前的备份
+  max_backups: 100                  # 最大备份数量
+
+# ── 快速清洗配置 ────────────────────────────────────────────
+fast_clean:
+  enabled: true
+  preserve_code_blocks: true        # 保留代码块
+  preserve_tables: true             # 保留表格
+  preserve_formulas: true           # 保留公式（$...$ 和 $$...$$）
+  # 自定义正则规则（额外删除模式）
+  custom_patterns: []
+
+# ── LLM 压缩配置 ────────────────────────────────────────────
+llm:
+  api_key: ""
+  base_url: "https://api.deepseek.com"
+  model: "deepseek-v4-flash"
+  max_chunk_tokens: 1000000           # 每段最大token
+  max_output_tokens: 327800          # 每段最大输出token
+  concurrency: 1                    # 并发数（输出量大，单线程更稳定）
+  temperature: 0.1
+  timeout: 1800                     # 请求超时（秒），默认30分钟
+  retries: 3                        # 重试次数
+  retry_base_delay: 2               # 指数退避基础延迟
+
+# ── 信息密度评估配置 ────────────────────────────────────────
+density:
+  enabled: true
+  glossary_path: "./config/glossary.txt"  # 术语词典
+  export_format: "json"             # json / csv
+
+# ── 删除规则：教学框架 ──────────────────────────────────────
+rules:
+  teaching_framework:
+    chapter_titles:
+      - "学习目标"
+      - "学习要求"
+      - "本章小结"
+      - "本章总结"
+      - "课后习题"
+      - "课后练习"
+      - "案例导入"
+      - "案例分析"
+      - "知识拓展"
+      - "拓展阅读"
+      - "本节小结"
+      - "学习建议"
+      - "教学目标"
+      - "能力目标"
+    # 匹配章节标题的正则（行首 # 标题包含关键词）
+    heading_pattern: "^#{1,6}\\s+.*(?:学习目标|学习要求|本章小结|本章总结|课后习题|课后练习|案例导入|案例分析|知识拓展|拓展阅读|本节小结|学习建议|教学目标|能力目标)"
+
+  # ── 删除规则：历史背景 ────────────────────────────────────
+  history:
+    keywords:
+      - "发展历程"
+      - "历史沿革"
+      - "演进历程"
+      - "时间线"
+      - "发明人"
+      - "创始人"
+      - "起源于"
+      - "诞生于"
+      - "最早由"
+      - "年提出"
+      - "年发明"
+      - "年发现"
+      - "世纪初"
+      - "世纪末"
+      - "年代初"
+      - "年代末"
+    heading_pattern: "^#{1,6}\\s+.*(?:历史|沿革|发展|演进|起源|背景介绍)"
+
+  # ── 删除规则：废话连接词 ──────────────────────────────────
+  filler_phrases:
+    - "值得一提的是"
+    - "需要注意的是"
+    - "值得注意的是"
+    - "综上所述"
+    - "总而言之"
+    - "不言而喻"
+    - "众所周知"
+    - "显而易见"
+    - "毋庸置疑"
+    - "事实上"
+    - "实际上"
+    - "换言之"
+    - "换句话说"
+    - "简而言之"
+    - "概括地说"
+    - "一般来说"
+    - "通常情况下"
+    - "从某种意义上说"
+    - "可以说"
+    - "不难发现"
+    - "正如前面所述"
+    - "如前所述"
+    - "如上所述"
+    - "基于以上分析"
+    - "在此基础上"
+    - "与此同时"
+    - "除此之外"
+    - "不仅如此"
+    - "更重要的是"
+    - "进一步而言"
+    - "具体来说"
+    - "具体而言"
+    - "详细来说"
+
+  # ── 删除规则：总结回顾 ────────────────────────────────────
+  summary:
+    heading_keywords:
+      - "本节要点"
+      - "本章回顾"
+      - "内容总结"
+      - "要点回顾"
+      - "本章要点"
+      - "本节回顾"
+      - "小结"
+      - "总结"
+    heading_pattern: "^#{1,6}\\s+.*(?:要点|回顾|总结|小结)"
+
+  # ── 删除规则：练习测试 ────────────────────────────────────
+  exercises:
+    heading_keywords:
+      - "思考题"
+      - "练习题"
+      - "实验题"
+      - "自测题"
+      - "习题"
+      - "作业"
+      - "实训"
+      - "上机练习"
+    heading_pattern: "^#{1,6}\\s+.*(?:思考题|练习题|实验题|自测题|习题|作业|实训|上机)"
+
+  # ── 删除规则：非技术脚注 ──────────────────────────────────
+  footnotes:
+    patterns:
+      - "^\\s*\\[?编者按\\]?[:：]"
+      - "^\\s*作者[备注简介注][:：]"
+      - "^\\s*\\[?注\\]?[:：]\\s*(?!\\d)"   # 非编号注释
+      - "^\\s*译者[注按][:：]"
+
+  # ── 删除规则：编码噪声 ────────────────────────────────────
+  encoding_noise:
+    # 乱码字符范围
+    garbled_pattern: "[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]"
+    # Yi音节字符（PDF转换常见乱码）
+    yi_syllable_pattern: "[\\uA000-\\uA48F]"
+    # 空格分割噪声（如 "I C S"）
+    spaced_letters_pattern: "\\b([A-Z])\\s([A-Z])\\s([A-Z])\\b"
+    # 页面分隔符
+    pagebreak_pattern: "---\\s*pagebreak\\s*---"
+    # 图片占位符注释
+    img_placeholder_pattern: "<!--.*?-->"
+    # 连续空行
+    excessive_blank_lines: "(\\n\\s*){3,}"
