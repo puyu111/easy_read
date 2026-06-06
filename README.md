@@ -12,7 +12,7 @@
 <p align="center">
   <img src="assets/qq.jpg" alt="QQ 群" width="200">
   <br>
-  <em>扫码加入 QQ 群 / Scan to join QQ Group</em>
+  <em>扫码加入 QQ 群：731479916 / Scan to join QQ Group: 731479916</em>
 </p>
 
 ---
