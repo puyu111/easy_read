@@ -1,8 +1,19 @@
-# Doc-Cleaner
+<p align="center">
+  <img src="assets/logo.jpg" alt="Doc-Cleaner Logo" width="300">
+</p>
 
-**智能技术文档清洗工具 — 从技术书籍中提取纯知识，去除一切噪音**
+<h1 align="center">Doc-Cleaner</h1>
 
-**Intelligent technical document cleaning tool — extract pure knowledge from technical books, remove all noise**
+<p align="center">
+  <b>智能技术文档清洗工具 — 从技术书籍中提取纯知识，去除一切噪音</b><br>
+  <em>Intelligent technical document cleaning tool — extract pure knowledge from technical books, remove all noise</em>
+</p>
+
+<p align="center">
+  <img src="assets/qq.jpg" alt="QQ 群" width="200">
+  <br>
+  <em>扫码加入 QQ 群 / Scan to join QQ Group</em>
+</p>
 
 ---
 
